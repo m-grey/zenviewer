@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>ZenViewer</title>
+		
+		<script src="javascripts/lib/angular.min.js"></script>
+		<script src="javascripts/lib/angular-ui-router.js"></script>
+		
+		<script src="javascripts/viewerController.js"></script>
+	</head>
+	<body ng-app="ticketViewer">
+		<h1>ZenViewer</h1>
+		<hr />
+		<div ui-view></div>
+		<script type="text/ng-template" id="/overview.html">
+			<h2>Tickets</h2>
+			<table>
+				<tr>
+					<th>ID</th>
+					<th>Subject</th>
+					<th>Status</th>
+				</tr>
+				<tr ng-repeat="ticket in tickets">
+					<td>{{ticket.id}}</td>
+					<td>{{ticket.subject}}</td>
+					<td>{{ticket.status}}</td>
+				</tr>
+			</table>
+		</script>
+		<script type="text/ng-template" id="/login.html">
+			<h2>User Login</h2>
+			<form ng-submit="checkLogin()">
+				<label>Username: </label><input type="text" ng-model="usernameInput" />
+				<br />
+				<br />
+				<label>Password: </label><input type="password" ng-model="passwordInput" />
+				<br />
+				<br />
+				<label>Account Name: </label><input type="text" ng-model="accountInput" />
+				<br />
+				<br />
+				<button type="submit">Login</button>
+			</form>
+		</script>
+	</body>
+</html>
