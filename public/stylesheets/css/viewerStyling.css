@@ -1,0 +1,10 @@
+#ticketView div {
+  margin: 15px; }
+  #ticketView div span {
+    display: inline-block;
+    margin: 5px; }
+#ticketView div.tags span {
+  background-color: gainsboro;
+  padding: 5px 10px; }
+
+/*# sourceMappingURL=viewerStyling.css.map */

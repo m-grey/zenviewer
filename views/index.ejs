@@ -7,6 +7,8 @@
 		<script src="javascripts/lib/angular-ui-router.js"></script>
 		
 		<script src="javascripts/viewerController.js"></script>
+		
+		<link rel="stylesheet" href="stylesheets/css/viewerStyling.css" />
 	</head>
 	<body ng-app="ticketViewer">
 		<h1>ZenViewer</h1>
@@ -29,11 +31,39 @@
 						<th>Status</th>
 					</tr>
 					<tr ng-repeat="ticket in tickets">
-						<td>{{ticket.id}}</td>
+						<td><a href="#/tickets/{{ticket.id}}">{{ticket.id}}</a></td>
 						<td>{{ticket.subject}}</td>
 						<td>{{ticket.status}}</td>
 					</tr>
 				</table>
+			</div>
+		</script>
+		<script type="text/ng-template" id="/ticket.html">
+			<div id="ticketView">
+				<h2>{{ticket.subject}}</h2>
+				<div>
+					<span><strong>ID:</strong> {{ticket.id}}</span>
+					<span><strong>Type:</strong> {{ticket.type}}</span>
+					<span><strong>Status:</strong> {{ticket.status}}</span>
+					<span><strong>Priority:</strong> {{ticket.priority}}</span>
+				</div>
+				<div>
+					<span><strong>Requested By:</strong> {{ticket.requester_id}}</span>
+					<span><strong>Assigned To:</strong> {{ticket.assignee_id}}</span>
+				</div>
+				<div>
+					<span><strong>Created:</strong> {{ticket.created_at}}</span>
+					<span><strong>Updated:</strong> {{ticket.updated_at}}</span>
+					<span><strong>Due:</strong> {{ticket.due_at}}</span>
+				</div>
+				<div class="tags">
+					<strong>Tags</strong>
+					<br/>
+					<span ng-repeat="tag in ticket.tags">{{tag}}</span>
+				</div>
+				<div>
+				<span><strong>Description</strong></span>
+				<p>{{ticket.description}}</p>
 			</div>
 		</script>
 		<script type="text/ng-template" id="/login.html">
@@ -54,7 +84,7 @@
 				<span class="error">{{error}}</span>
 				<br />
 				<br />
-				<a href="#/overview" ng-show="message"><span>Go to Ticket Overview</span></a>
+				<a href="#/tickets" ng-show="message"><span>Go to Ticket Overview</span></a>
 			</form>
 		</script>
 		<script type="text/ng-template" id="/loginTest.html">

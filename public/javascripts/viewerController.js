@@ -6,9 +6,13 @@ app.config([
 function($stateProvider, $urlRouterProvider) {
 		$stateProvider
 			.state('overview', {
-				url: '/overview',
+				url: '/tickets',
 				templateUrl: '/overview.html',
 				controller: 'ticketOverviewController'
+			}).state('ticket', {
+				url: '/tickets/:id',
+				templateUrl: '/ticket.html',
+				controller: 'ticketController'
 			}).state('login', {
 				url: '/login',
 				templateUrl: '/login.html',
@@ -18,12 +22,26 @@ function($stateProvider, $urlRouterProvider) {
 				templateUrl: '/loginTest.html',
 				controller: 'userAuthController'
 			}).state('overviewTest', {
-				url: '/overviewTest',
+				url: '/ticketsTest',
 				templateUrl: '/overviewTest.html',
 				controller: 'ticketOverviewController'
 			});
 	
 		$urlRouterProvider.otherwise('login');
+	}
+]);
+
+/**
+ * Individual ticket control
+ */
+app.controller('ticketController',[
+	'$scope',
+	'$stateParams',
+	'ticketFactory',
+	function($scope, $stateParams, ticketFactory){
+		//get the selected ticket ID from the uri
+		//get the data of that ticket from the ticket factory
+		$scope.ticket = ticketFactory.tickets[$stateParams.id];
 	}
 ]);
 
@@ -41,10 +59,9 @@ app.factory('ticketFactory', [function(){
 app.controller("ticketOverviewController",[
 	"$scope",
 	"$http",
-	"$state",
 	"ticketFactory",
 	"userFactory",
-	function($scope, $http, $state, ticketFactory, userFactory){
+	function($scope, $http, ticketFactory, userFactory){
 
 		//tickets are held in a factory obj so that they persist through views
 		$scope.tickets = ticketFactory.tickets;
@@ -72,7 +89,7 @@ app.controller("ticketOverviewController",[
 					{
 						for(var i=0; i < data.tickets.length; i++)
 						{
-							$scope.tickets.push(data.tickets[i]);
+							$scope.tickets[data.tickets[i].id] = data.tickets[i];
 						}
 					}
 					else
@@ -113,9 +130,8 @@ app.factory('userFactory', [function(){
 app.controller("userAuthController",[
 	"$scope",
 	"$http",
-	"$state",
 	"userFactory",
-	function($scope, $http, $state, userFactory){
+	function($scope, $http, userFactory){
 		
 		//user stored in factory so that it persists
 		$scope.user = userFactory.user;

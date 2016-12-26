@@ -8,38 +8,51 @@ router.get("/", function(req, res){
 
 router.get("/tickets", function(req, res){
 	//make sure the the required data was passed in
-	if(!req.query.user || !req.query.pass || !req.query.account)
+	if(!req.query.user || !req.query.pass || !req.query.account){
 		return res.status(400).json({
 			code:1, 
 			message:"Please supply a user login, password, and account name."
 		});
-	
-	//get all of the tickets from zendesk	
-	request({
-		protocol: "https:",
-		url: "https://"+req.query.account+".zendesk.com/api/v2/tickets.json",
-		method: "get",
-		auth: {
-			username: req.query.user,
-			password: req.query.pass
-		},
-	}, function(err, resp, body){
-		if(err)
-			res.status(500).json({
-				code:2, 
-				message:"An error occurred when contacting the zendesk api - " + err
-			}); 
-		else{
-			//check for errors sent by zendesk
-			var bodyObj = JSON.parse(body);
-			if(bodyObj.error)
-				res.status(500).json({
-					code:3,
-					message:"An error occurred when pulling your tickets down from zendesk - " + bodyObj.error
-				});
-		}
-			res.status(200).send(body);
-	});
+	}
+	else{
+		//if no ID was passed in, then request all tickets -controlled by URL
+		var url = "https://"+req.query.account+".zendesk.com/api/v2/tickets";
+
+		if(req.query.id)
+			url += "/"+req.query.id;
+
+		//complete URL with .json
+		url += ".json";
+
+		//get ticket(s) from zendesk	
+		request({
+			protocol: "https:",
+			url: url,
+			method: "get",
+			auth: {
+				username: req.query.user,
+				password: req.query.pass
+			},
+		}, function(err, resp, body){
+			if(err)
+				return res.status(500).json({
+					code:2, 
+					message:"An error occurred when contacting the zendesk api - " + err
+				}); 
+			else{
+				//check for errors sent by zendesk
+				var bodyObj = JSON.parse(body);
+				if(bodyObj.error){
+					return res.status(500).json({
+						code:3,
+						message:"An error occurred when pulling your tickets down from zendesk - " + bodyObj.error
+					});
+				}
+				else
+					return res.status(200).json(bodyObj);
+			}
+		});
+	}
 });	
 
 router.get("/auth", function(req, res){
@@ -84,5 +97,16 @@ router.get("/auth", function(req, res){
 			res.end();
 	});
 });
+
+function requestTickets(user, pass, account, id)
+{
+	if(!user || !pass || !account){
+		return {
+			code:1,
+			message:"Please provide a valid username, password, and account name to retrieve tickets."
+		};
+	}
+	
+}
 
 module.exports = router;
