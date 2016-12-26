@@ -13,19 +13,28 @@
 		<hr />
 		<div ui-view></div>
 		<script type="text/ng-template" id="/overview.html">
-			<h2>Tickets</h2>
-			<table>
-				<tr>
-					<th>ID</th>
-					<th>Subject</th>
-					<th>Status</th>
-				</tr>
-				<tr ng-repeat="ticket in tickets">
-					<td>{{ticket.id}}</td>
-					<td>{{ticket.subject}}</td>
-					<td>{{ticket.status}}</td>
-				</tr>
-			</table>
+			<div ng-hide="user.auth">
+				<h2>No active user</h2>
+				<span>Please return to the login screen and authenticate a user to display tickets.</span>
+				<br />
+				<br />
+				<a href="#/login"><span>Go to Login Screen</span></a>
+			</div>
+			<div ng-show="user.auth">
+				<h2>Tickets <button ng-click="getTickets()">Get Tickets</button></h2>
+				<table>
+					<tr>
+						<th>ID</th>
+						<th>Subject</th>
+						<th>Status</th>
+					</tr>
+					<tr ng-repeat="ticket in tickets">
+						<td>{{ticket.id}}</td>
+						<td>{{ticket.subject}}</td>
+						<td>{{ticket.status}}</td>
+					</tr>
+				</table>
+			</div>
 		</script>
 		<script type="text/ng-template" id="/login.html">
 			<h2>User Login</h2>
@@ -39,8 +48,40 @@
 				<label>Account Name: </label><input type="text" ng-model="accountInput" />
 				<br />
 				<br />
-				<button type="submit">Login</button>
+				<button type="submit">Login</button><br />
+				<br />
+				<span>{{message}}</span>
+				<span class="error">{{error}}</span>
+				<br />
+				<br />
+				<a href="#/overview" ng-show="message"><span>Go to Ticket Overview</span></a>
 			</form>
+		</script>
+		<script type="text/ng-template" id="/loginTest.html">
+			<p><strong>Output:</strong> {{message}}{{error}}</p>
+			<br />
+			<div>
+				<strong>Empty User Input</strong>
+				<button ng-click="test_EmptyUser()">Run</button>
+				<br />
+				<span>Expected: Please supply a user login, password, and account name.</span>
+			</div>
+			<div>
+				<strong>Incorrect User Input</strong>
+				<button ng-click="test_IncorrectUser()">Run</button>
+				<br />
+				<span>Expected: Zendesk didn't authenticate your details, please input valid user details</span>
+			</div>
+		</script>
+		<script type="text/ng-template" id="/overviewTest.html">
+			<p><strong>Output:</strong> {{message}}{{error}}</p>
+			<br />
+			<div>
+				<strong>Invalid User</strong>
+				<button ng-click="test_InvalidUser()">Run</button>
+				<br />
+				<span>Expected: There is no active, authenticated user, please go back and login before proceeding.</span>
+			</div>
 		</script>
 	</body>
 </html>

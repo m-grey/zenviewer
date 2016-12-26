@@ -6,13 +6,21 @@ app.config([
 function($stateProvider, $urlRouterProvider) {
 		$stateProvider
 			.state('overview', {
-				url:'/overview',
-				templateUrl:'/overview.html',
-				controller:'ticketOverviewController'
+				url: '/overview',
+				templateUrl: '/overview.html',
+				controller: 'ticketOverviewController'
 			}).state('login', {
-				url:'/login',
-				templateUrl:'/login.html',
-				controller:'userAuthController'
+				url: '/login',
+				templateUrl: '/login.html',
+				controller: 'userAuthController'
+			}).state('loginTest', {
+				url: '/loginTest',
+				templateUrl: '/loginTest.html',
+				controller: 'userAuthController'
+			}).state('overviewTest', {
+				url: '/overviewTest',
+				templateUrl: '/overviewTest.html',
+				controller: 'ticketOverviewController'
 			});
 	
 		$urlRouterProvider.otherwise('login');
@@ -42,34 +50,48 @@ app.controller("ticketOverviewController",[
 		$scope.tickets = ticketFactory.tickets;
 		
 		//user must be authenticated, if they arent then ask for login details
-		var user = userFactory.user;
-		if(!user.auth)
-			$state.go('login');
-		else
-		{
-			//asynch get tickets from the server 
-			$http({
-				url: "http://localhost:3000/tickets",
-				method: "GET",
-				params:{
-					'user': user.name,
-					'pass': user.pass,
-					'account': user.accName
-				}
-			}).success(function(data, status, headers, config){
-				//tickets retreived, add them to tickets container
-				if(data.tickets !== undefined)
-				{
-					for(var i=0; i < data.tickets.length; i++)
-					{
-						$scope.tickets.push(data.tickets[i]);
+		$scope.user = userFactory.user;
+		
+		$scope.getTickets = function(){
+			if($scope.user === undefined || !$scope.user.auth){
+				$scope.error = "There is no active, authenticated user, please go back and login before proceeding.";
+			}
+			else{
+				//asynch get tickets from the server 
+				$http({
+					url: "http://localhost:3000/tickets",
+					method: "GET",
+					params:{
+						'user': $scope.user.name,
+						'pass': $scope.user.pass,
+						'account': $scope.user.accName
 					}
-				}
-			}).error(function(data, status, headers, config){
-				//display error that occurred
-				$scope.error = data.message;
-			});		
-		}
+				}).success(function(data, status, headers, config){
+					//tickets retreived, add them to tickets container
+					if(data.tickets !== undefined)
+					{
+						for(var i=0; i < data.tickets.length; i++)
+						{
+							$scope.tickets.push(data.tickets[i]);
+						}
+					}
+					else
+						$scope.error = "There was a problem in parsing your tickets from zendesk";
+				}).error(function(data, status, headers, config){
+					//display error that occurred
+					$scope.error = data.message;
+				});		
+			}
+		};
+		
+		$scope.test_InvalidUser = function(){
+			var tempUser = angular.copy($scope.user);
+			$scope.user = undefined;
+			$scope.getTickets();
+			
+			//restore old user
+			$scope.user = angular.copy(tempUser);
+		};
 	}
 ]);
 
@@ -93,16 +115,26 @@ app.controller("userAuthController",[
 	"$http",
 	"$state",
 	"userFactory",
-	function($scope, $http, $state, userFactory){		
+	function($scope, $http, $state, userFactory){
+		
 		//user stored in factory so that it persists
 		$scope.user = userFactory.user;
-			
+		
+		//testing outputs linked to error
+		$scope.emptyUserOutput = $scope.error;
+		$scope.incorrectUserOutput = $scope.error;
+		
 		//check credentials against server to validate them
 		$scope.checkLogin = function(){
+		
 			//fetch the user's credentials 
 			$scope.user.name = $scope.usernameInput;
 			$scope.user.pass = $scope.passwordInput;
 			$scope.user.accName = $scope.accountInput;
+			
+			//testing outputs linked to error
+		$scope.emptyUserOutput = $scope.error;
+		$scope.incorrectUserOutput = $scope.error;
 			
 			//run ajax call to check creds
 			$http({
@@ -117,13 +149,36 @@ app.controller("userAuthController",[
 				//user credentials valid, reflect that in the user obj
 				$scope.user.auth = true;
 				
-				//change state to tickets view
-				$state.go('overview');
-				
+				//show success message and hide errors
+				$scope.message = "User is authentic, proceed to the ticket view";
+				$scope.error = null;
+
 			}).error(function(data, status, headers, config){
 				//user credentials invalid, reflect that in the user obj
 				$scope.user.auth = false;
+				
+				//show fail message
+				$scope.error = data.message;
+				$scope.message = null;
+			
 			});
+		};
+		
+		$scope.test_EmptyUser = function(){
+			$scope.usernameInput = "";
+			$scope.passwordInput = "";
+			$scope.accountInput = "";
+
+			$scope.checkLogin();
+			
+		};
+		
+		$scope.test_IncorrectUser = function(){
+			$scope.usernameInput = "a";
+			$scope.passwordInput = "b";
+			$scope.accountInput = "c";
+
+			$scope.checkLogin();
 		};
 	}
 ]);

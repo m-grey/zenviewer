@@ -25,11 +25,19 @@ router.get("/tickets", function(req, res){
 		},
 	}, function(err, resp, body){
 		if(err)
-			res.status(400).json({
+			res.status(500).json({
 				code:2, 
 				message:"An error occurred when contacting the zendesk api - " + err
 			}); 
-		else
+		else{
+			//check for errors sent by zendesk
+			var bodyObj = JSON.parse(body);
+			if(bodyObj.error)
+				res.status(500).json({
+					code:3,
+					message:"An error occurred when pulling your tickets down from zendesk - " + bodyObj.error
+				});
+		}
 			res.status(200).send(body);
 	});
 });	
@@ -54,15 +62,25 @@ router.get("/auth", function(req, res){
 		},
 	}, function(err, resp, body){
 		if(err)
-			res.status(400).json({
+			res.status(500).json({
 				code:2, 
 				message:"An error occurred when authenticating the user" + err
 			}); 
 		else
-			res.status(200).json({
-				code:0, 
-				message:"User details authentic"
-			});
+			//request was made successfully, check if the authentication went through
+			if(JSON.parse(body).error){
+				res.status(400).json({
+					code:3,
+					message:"Zendesk didn't authenticate your details, please input valid user details"
+				});
+			}
+			//no error passed back from zendesk, valid user
+			else{
+				res.status(200).json({
+					code:0, 
+					message:"User details authentic"
+				});
+			}
 			res.end();
 	});
 });
