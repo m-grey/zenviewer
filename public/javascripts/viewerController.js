@@ -38,10 +38,19 @@ app.controller('ticketController',[
 	'$scope',
 	'$stateParams',
 	'ticketFactory',
-	function($scope, $stateParams, ticketFactory){
+	'userFactory',
+	function($scope, $stateParams, ticketFactory, userFactory){
+		//get active user from factory
+		$scope.user = userFactory.user;
+		
 		//get the selected ticket ID from the uri
 		//get the data of that ticket from the ticket factory
-		$scope.ticket = ticketFactory.tickets[$stateParams.id];
+		for(var i=0; i<ticketFactory.tickets.length; i++){
+			if($ticketFactory.tickets[i].id == $stateParams.id){
+				$scope.ticket = ticketFactory.tickets[$stateParams.id];
+				break;
+			}
+		}
 	}
 ]);
 
@@ -49,6 +58,7 @@ app.controller('ticketController',[
  * Ticket overview control
  */
 
+//ticket storage service
 app.factory('ticketFactory', [function(){
 	var obj = {
 		tickets:[]
@@ -56,6 +66,15 @@ app.factory('ticketFactory', [function(){
 	return obj;
 }]);
 
+//filter for paging of tickets
+app.filter('pageStart', function(){
+	return function(input, startNum){
+		startNum = parseInt(startNum);
+		return input.slice(startNum);
+	};
+});
+
+//ticket overview controller
 app.controller("ticketOverviewController",[
 	"$scope",
 	"$http",
@@ -68,6 +87,11 @@ app.controller("ticketOverviewController",[
 		
 		//user must be authenticated, if they arent then ask for login details
 		$scope.user = userFactory.user;
+		
+		//Paging controls for displaying pages of tickets
+		$scope.currentPage = 0;
+		$scope.ticketsPerPage = 100;
+		$scope.maxPageNum = 0;
 		
 		$scope.getTickets = function(){
 			if($scope.user === undefined || !$scope.user.auth){
@@ -89,8 +113,13 @@ app.controller("ticketOverviewController",[
 					{
 						for(var i=0; i < data.tickets.length; i++)
 						{
-							$scope.tickets[data.tickets[i].id] = data.tickets[i];
+							if(data.tickets[i].id !== ""){
+								$scope.tickets.push(data.tickets[i]);
+							}
 						}
+						
+						//set number of pages
+						$scope.maxPageNum = Math.ceil($scope.tickets.length / $scope.ticketsPerPage);
 					}
 					else
 						$scope.error = "There was a problem in parsing your tickets from zendesk";

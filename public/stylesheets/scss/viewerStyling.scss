@@ -1,16 +1,61 @@
-#ticketView{
+#DIV_header{
+	h1, span{
+		display:inline-block;
+		vertical-align: middle;
+	}
+	
+	h1{
+		margin-right:15px;
+	}
+	
+	span{
+		margin:5px 10px;
+		padding:10px;
+	}
+	
+	border-bottom: 2px solid black;
+}
+
+.DIV_controls{
+	*{
+		display:inline-block;
+		vertical-align: middle;
+		margin:5px;
+	}
+	h2{
+		margin-right:15px;
+	}
+}
+
+#DIV_ticketView{
 	div{
-		margin:15px;
 		
 		span{
 			display:inline-block;
 			margin:5px;
 		}
+		
+		margin:10px 0px;
 	}
-	div.tags{
+	
+	.DIV_tags{
 		span{
 			background-color:gainsboro;
 			padding:5px 10px;
+		}
+	}
+	
+	margin:15px;
+}
+
+#DIV_overview{
+	table{
+		th,td{
+			text-align:center;
+			padding:2px;
+		}
+		tr:nth-child(even){
+			background-color: bisque;
 		}
 	}
 }

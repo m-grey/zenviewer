@@ -11,59 +11,88 @@
 		<link rel="stylesheet" href="stylesheets/css/viewerStyling.css" />
 	</head>
 	<body ng-app="ticketViewer">
-		<h1>ZenViewer</h1>
-		<hr />
+		<div id="DIV_header">
+			<h1>ZenViewer</h1>
+			<a href="#/login"><span>Login</span></a>
+			<a href="#/tickets"><span>Tickets</span></a>
+			<a href="#/testLogin"><span>Test Login</span></a>
+			<a href="#/testTickets"><span>Test Tickets</span></a>
+		</div>
 		<div ui-view></div>
 		<script type="text/ng-template" id="/overview.html">
-			<div ng-hide="user.auth">
-				<h2>No active user</h2>
-				<span>Please return to the login screen and authenticate a user to display tickets.</span>
-				<br />
-				<br />
-				<a href="#/login"><span>Go to Login Screen</span></a>
-			</div>
-			<div ng-show="user.auth">
-				<h2>Tickets <button ng-click="getTickets()">Get Tickets</button></h2>
-				<table>
-					<tr>
-						<th>ID</th>
-						<th>Subject</th>
-						<th>Status</th>
-					</tr>
-					<tr ng-repeat="ticket in tickets">
-						<td><a href="#/tickets/{{ticket.id}}">{{ticket.id}}</a></td>
-						<td>{{ticket.subject}}</td>
-						<td>{{ticket.status}}</td>
-					</tr>
-				</table>
+			<div id="DIV_overview">
+				<div ng-hide="user.auth">
+					<h2>No active user</h2>
+					<span>Please return to the login screen and authenticate a user to display tickets.</span>
+					<br />
+					<br />
+					<a href="#/login"><span>Go to Login Screen</span></a>
+				</div>
+				<div ng-show="user.auth">
+					<div class="DIV_controls">
+						<h2>Tickets</h2>
+						
+						<button ng-click="getTickets()">Get Tickets</button></h2>
+						
+						<button ng-disabled="currentPage == 0" ng-click="currentPage = currentPage-1">&lt;</button>
+						
+						<span>{{currentPage+1}} / {{maxPageNum}}</span>
+						
+						<button ng-disabled="currentPage == maxPageNum" ng-click="currentPage = currentPage+1">&gt;</button>
+					</div>
+					<table>
+						<tr>
+							<th>ID</th>
+							<th>Subject</th>
+							<th>Status</th>
+							<th>Created At</th>
+						</tr>
+						<tr ng-repeat="ticket in tickets | pageStart: currentPage * ticketsPerPage | limitTo: ticketsPerPage">
+							<td><a href="#/tickets/{{ticket.id}}">{{ticket.id}}</a></td>
+							<td><a href="#/tickets/{{ticket.id}}">{{ticket.subject}}</a></td>
+							<td>{{ticket.status}}</td>
+							<td>{{ticket.created_at}}</td>
+						</tr>
+					</table>
+				</div>
 			</div>
 		</script>
 		<script type="text/ng-template" id="/ticket.html">
-			<div id="ticketView">
-				<h2>{{ticket.subject}}</h2>
-				<div>
-					<span><strong>ID:</strong> {{ticket.id}}</span>
-					<span><strong>Type:</strong> {{ticket.type}}</span>
-					<span><strong>Status:</strong> {{ticket.status}}</span>
-					<span><strong>Priority:</strong> {{ticket.priority}}</span>
+			<div id="DIV_ticketView">
+				<div ng-hide="user.auth">
+					<h2>No active user</h2>
+					<span>Please return to the login screen and authenticate a user to display tickets.</span>
+					<br />
+					<br />
+					<a href="#/login"><span>Go to Login Screen</span></a>
 				</div>
-				<div>
-					<span><strong>Requested By:</strong> {{ticket.requester_id}}</span>
-					<span><strong>Assigned To:</strong> {{ticket.assignee_id}}</span>
+				<div ng-show="user.auth">
+					<a href="#/tickets">&lt; Back to Overview</a>
+					<h2>{{ticket.subject}}</h2>
+					<div>
+						<span><strong>ID:</strong> {{ticket.id}}</span>
+						<span ng-show="ticket.type"><strong>Type:</strong> {{ticket.type}}</span>
+						<span ng-show="ticket.status"><strong>Status:</strong> {{ticket.status}}</span>
+						<span ng-show="ticket.priority"><strong>Priority:</strong> {{ticket.priority}}</span>
+					</div>
+					<div>
+						<span><strong>Requested By:</strong> {{ticket.requester_id}}</span>
+						<span ng-show="ticket.assignee_id"><strong>Assigned To:</strong> {{ticket.assignee_id}}</span>
+					</div>
+					<div>
+						<span><strong>Created:</strong> {{ticket.created_at}}</span>
+						<span ng-show="ticket.updated_at"><strong>Updated:</strong> {{ticket.updated_at}}</span>
+						<span ng-show="ticket.due_at"><strong>Due:</strong> {{ticket.due_at}}</span>
+					</div>
+					<div class="DIV_tags" ng-show="ticket.tags">
+						<strong>Tags</strong>
+						<br/>
+						<span ng-repeat="tag in ticket.tags">{{tag}}</span>
+					</div>
+					<div>
+					<span><strong>Description</strong></span>
+					<p>{{ticket.description}}</p>
 				</div>
-				<div>
-					<span><strong>Created:</strong> {{ticket.created_at}}</span>
-					<span><strong>Updated:</strong> {{ticket.updated_at}}</span>
-					<span><strong>Due:</strong> {{ticket.due_at}}</span>
-				</div>
-				<div class="tags">
-					<strong>Tags</strong>
-					<br/>
-					<span ng-repeat="tag in ticket.tags">{{tag}}</span>
-				</div>
-				<div>
-				<span><strong>Description</strong></span>
-				<p>{{ticket.description}}</p>
 			</div>
 		</script>
 		<script type="text/ng-template" id="/login.html">
