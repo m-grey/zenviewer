@@ -27,7 +27,7 @@ function($stateProvider, $urlRouterProvider) {
 				controller: 'ticketOverviewController'
 			});
 	
-		$urlRouterProvider.otherwise('overviewTest');
+		$urlRouterProvider.otherwise('login');
 	}
 ]);
 
@@ -46,7 +46,7 @@ app.controller('ticketController',[
 		//get the selected ticket ID from the uri
 		//get the data of that ticket from the ticket factory
 		for(var i=0; i<ticketFactory.tickets.length; i++){
-			if($ticketFactory.tickets[i].id == $stateParams.id){
+			if(ticketFactory.tickets[i].id == $stateParams.id){
 				$scope.ticket = ticketFactory.tickets[$stateParams.id];
 				break;
 			}
@@ -98,6 +98,10 @@ app.controller("ticketOverviewController",[
 				$scope.error = "There is no active, authenticated user, please go back and login before proceeding.";
 			}
 			else{
+				//tell the user that the data is loading
+				$scope.message = "Loading";
+				$scope.error = null;
+				
 				//asynch get tickets from the server 
 				$http({
 					url: "http://localhost:3000/tickets",
@@ -108,22 +112,37 @@ app.controller("ticketOverviewController",[
 						'account': $scope.user.accName
 					}
 				}).success(function(data, status, headers, config){
+					//hide the loading message
+					$scope.message = null;
+					$scope.error = null;
+					
 					//tickets retreived, add them to tickets container
 					if(data.code === 0 && data.body.tickets !== undefined)
 					{
 						for(var i=0; i < data.body.tickets.length; i++)
 						{
 							if(data.body.tickets[i].id !== ""){
-								$scope.tickets.push(data.tickets[i]);
+								$scope.tickets.push(data.body.tickets[i]);
 							}
+						}
+						
+						//if there are no tickets, tell the user that in a message
+						if(data.body.tickets.length === 0){
+							$scope.message = "There are no tickets in your account.";
+							$scope.error = null;
 						}
 						
 						//set number of pages
 						$scope.maxPageNum = Math.ceil($scope.tickets.length / $scope.ticketsPerPage);
 					}
-					else
+					else{
 						$scope.error = "There was a problem in parsing your tickets from zendesk";
+						$scope.message = null;
+					}
 				}).error(function(data, status, headers, config){
+					//hide the loading message
+					$scope.message = null;
+					
 					//display error that occurred
 					$scope.error = data.message;
 				});		
@@ -165,10 +184,6 @@ app.controller("userAuthController",[
 		//user stored in factory so that it persists
 		$scope.user = userFactory.user;
 		
-		//testing outputs linked to error
-		$scope.emptyUserOutput = $scope.error;
-		$scope.incorrectUserOutput = $scope.error;
-		
 		//check credentials against server to validate them
 		$scope.checkLogin = function(){
 		
@@ -177,9 +192,9 @@ app.controller("userAuthController",[
 			$scope.user.pass = $scope.passwordInput;
 			$scope.user.accName = $scope.accountInput;
 			
-			//testing outputs linked to error
-		$scope.emptyUserOutput = $scope.error;
-		$scope.incorrectUserOutput = $scope.error;
+			//show a loading message while the request is sent
+			$scope.message = "Loading";
+			$scope.error = null;
 			
 			//run ajax call to check creds
 			$http({
@@ -194,8 +209,8 @@ app.controller("userAuthController",[
 				//user credentials valid, reflect that in the user obj
 				$scope.user.auth = true;
 				
-				//show success message and hide errors
-				$scope.message = "User is authentic, proceed to the ticket view";
+				//hide messages and errors
+				$scope.message = null;
 				$scope.error = null;
 
 			}).error(function(data, status, headers, config){

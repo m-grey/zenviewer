@@ -16,6 +16,12 @@
 	border-bottom: 2px solid black;
 }
 
+.DIV_loginView{
+	&>*{
+		text-align: center;
+	}
+}
+
 .DIV_controls{
 	*{
 		display:inline-block;
@@ -25,10 +31,28 @@
 	h2{
 		margin-right:15px;
 	}
+	
+	text-align: center;
 }
 
-#DIV_ticketView{
-	div{
+.DIV_ticketView{
+	.DIV_ticketWrapper{
+		&>div{
+			display:inline-block;
+			text-align:left;
+			
+			div{
+				margin:10px 0px;
+				span{
+					display:inline-block;
+					margin:5px;
+				}
+			}
+		}
+		text-align:center;
+	}
+	.DIV_error{
+		text-align: center;
 		
 		span{
 			display:inline-block;
@@ -40,7 +64,7 @@
 	
 	.DIV_tags{
 		span{
-			background-color:gainsboro;
+			background-color:aliceblue;
 			padding:5px 10px;
 		}
 	}
@@ -48,16 +72,25 @@
 	margin:15px;
 }
 
-#DIV_overview{
+.DIV_overview{
+	
 	table{
 		th,td{
 			text-align:center;
-			padding:2px;
+			padding:5px;
 		}
 		tr:nth-child(even){
-			background-color: bisque;
+			background-color: aliceblue;
 		}
+		
+		display:inline-block;
+		border-collapse: collapse;
 	}
+	div, table{
+		text-align: center;
+	}
+	
+	text-align: center;
 }
 
 .DIV_testView{

@@ -9,29 +9,52 @@
     margin: 5px 10px;
     padding: 10px; }
 
-.DIV_controls * {
-  display: inline-block;
-  vertical-align: middle;
-  margin: 5px; }
-.DIV_controls h2 {
-  margin-right: 15px; }
+.DIV_loginView > * {
+  text-align: center; }
 
-#DIV_ticketView {
+.DIV_controls {
+  text-align: center; }
+  .DIV_controls * {
+    display: inline-block;
+    vertical-align: middle;
+    margin: 5px; }
+  .DIV_controls h2 {
+    margin-right: 15px; }
+
+.DIV_ticketView {
   margin: 15px; }
-  #DIV_ticketView div {
+  .DIV_ticketView .DIV_ticketWrapper {
+    text-align: center; }
+    .DIV_ticketView .DIV_ticketWrapper > div {
+      display: inline-block;
+      text-align: left; }
+      .DIV_ticketView .DIV_ticketWrapper > div div {
+        margin: 10px 0px; }
+        .DIV_ticketView .DIV_ticketWrapper > div div span {
+          display: inline-block;
+          margin: 5px; }
+  .DIV_ticketView .DIV_error {
+    text-align: center;
     margin: 10px 0px; }
-    #DIV_ticketView div span {
+    .DIV_ticketView .DIV_error span {
       display: inline-block;
       margin: 5px; }
-  #DIV_ticketView .DIV_tags span {
-    background-color: gainsboro;
+  .DIV_ticketView .DIV_tags span {
+    background-color: aliceblue;
     padding: 5px 10px; }
 
-#DIV_overview table th, #DIV_overview table td {
-  text-align: center;
-  padding: 2px; }
-#DIV_overview table tr:nth-child(even) {
-  background-color: bisque; }
+.DIV_overview {
+  text-align: center; }
+  .DIV_overview table {
+    display: inline-block;
+    border-collapse: collapse; }
+    .DIV_overview table th, .DIV_overview table td {
+      text-align: center;
+      padding: 5px; }
+    .DIV_overview table tr:nth-child(even) {
+      background-color: aliceblue; }
+  .DIV_overview div, .DIV_overview table {
+    text-align: center; }
 
 .DIV_testView div {
   margin-bottom: 25px; }

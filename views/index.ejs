@@ -20,7 +20,7 @@
 		</div>
 		<div ui-view></div>
 		<script type="text/ng-template" id="/tickets.html">
-			<div id="DIV_overview">
+			<div class="DIV_overview">
 				<div ng-hide="user.auth">
 					<h2>No active user</h2>
 					<span>Please return to the login screen and authenticate a user to display tickets.</span>
@@ -40,7 +40,9 @@
 						
 						<button ng-disabled="currentPage == maxPageNum" ng-click="currentPage = currentPage+1">&gt;</button>
 					</div>
-					<table>
+					<h3 ng-show="message">{{message}}</h3>
+					<h3 ng-show="error">{{error}}</h3>
+					<table ng-show="tickets.length > 0">
 						<tr>
 							<th>ID</th>
 							<th>Subject</th>
@@ -58,63 +60,80 @@
 			</div>
 		</script>
 		<script type="text/ng-template" id="/ticket.html">
-			<div id="DIV_ticketView">
-				<div ng-hide="user.auth">
+			<div class="DIV_ticketView">
+				<a href="#/tickets">&lt; Back to Overview</a>
+				<div class="DIV_error" ng-hide="user.auth">
 					<h2>No active user</h2>
 					<span>Please return to the login screen and authenticate a user to display tickets.</span>
 					<br />
 					<br />
 					<a href="#/login"><span>Go to Login Screen</span></a>
 				</div>
-				<div ng-show="user.auth">
-					<a href="#/tickets">&lt; Back to Overview</a>
-					<h2>{{ticket.subject}}</h2>
+				<div class="DIV_ticketWrapper" ng-show="user.auth">
 					<div>
-						<span><strong>ID:</strong> {{ticket.id}}</span>
-						<span ng-show="ticket.type"><strong>Type:</strong> {{ticket.type}}</span>
-						<span ng-show="ticket.status"><strong>Status:</strong> {{ticket.status}}</span>
-						<span ng-show="ticket.priority"><strong>Priority:</strong> {{ticket.priority}}</span>
+						<h2>{{ticket.subject}}</h2>
+						<div>
+							<span><strong>ID:</strong> {{ticket.id}}</span>
+							<span ng-show="ticket.type"><strong>Type:</strong> {{ticket.type}}</span>
+							<span ng-show="ticket.status"><strong>Status:</strong> {{ticket.status}}</span>
+							<span ng-show="ticket.priority"><strong>Priority:</strong> {{ticket.priority}}</span>
+						</div>
+						<div>
+							<span><strong>Requested By:</strong> {{ticket.requester_id}}</span>
+							<span ng-show="ticket.assignee_id"><strong>Assigned To:</strong> {{ticket.assignee_id}}</span>
+						</div>
+						<div>
+							<span><strong>Created:</strong> {{ticket.created_at}}</span>
+							<span ng-show="ticket.updated_at"><strong>Updated:</strong> {{ticket.updated_at}}</span>
+							<span ng-show="ticket.due_at"><strong>Due:</strong> {{ticket.due_at}}</span>
+						</div>
+						<div class="DIV_tags" ng-show="ticket.tags">
+							<strong>Tags</strong>
+							<br/>
+							<span ng-repeat="tag in ticket.tags">{{tag}}</span>
+						</div>
+						<div>
+						<span><strong>Description</strong></span>
+						<p>{{ticket.description}}</p>
 					</div>
-					<div>
-						<span><strong>Requested By:</strong> {{ticket.requester_id}}</span>
-						<span ng-show="ticket.assignee_id"><strong>Assigned To:</strong> {{ticket.assignee_id}}</span>
-					</div>
-					<div>
-						<span><strong>Created:</strong> {{ticket.created_at}}</span>
-						<span ng-show="ticket.updated_at"><strong>Updated:</strong> {{ticket.updated_at}}</span>
-						<span ng-show="ticket.due_at"><strong>Due:</strong> {{ticket.due_at}}</span>
-					</div>
-					<div class="DIV_tags" ng-show="ticket.tags">
-						<strong>Tags</strong>
-						<br/>
-						<span ng-repeat="tag in ticket.tags">{{tag}}</span>
-					</div>
-					<div>
-					<span><strong>Description</strong></span>
-					<p>{{ticket.description}}</p>
 				</div>
 			</div>
 		</script>
 		<script type="text/ng-template" id="/login.html">
-			<h2>User Login</h2>
-			<form ng-submit="checkLogin()">
-				<label>Username: </label><input type="text" ng-model="usernameInput" />
+			<div class="DIV_loginView">
+				<h2>User Login</h2>
+				<div ng-hide="user.auth">
+					<form ng-submit="checkLogin()">
+						<label>Username: </label><input type="text" ng-model="usernameInput" />
+						<br />
+						<br />
+						<label>Password: </label><input type="password" ng-model="passwordInput" />
+						<br />
+						<br />
+						<label>Account Name: </label><input type="text" ng-model="accountInput" />
+						<br />
+						<br />
+						<button type="submit">Login</button><br />
+					</form>
+				</div>
 				<br />
+				<div>
+					<div ng-show="user.auth">
+						<h3>Logged in to {{user.accName}}</h3>
+						<a href="#/tickets"><span>Please proceed to the ticket overview.</span></a>
+					</div>
+					<br />
+					<span>{{message}}</span>
+					<span class="error">{{error}}</span>
+				</div>
 				<br />
-				<label>Password: </label><input type="password" ng-model="passwordInput" />
-				<br />
-				<br />
-				<label>Account Name: </label><input type="text" ng-model="accountInput" />
-				<br />
-				<br />
-				<button type="submit">Login</button><br />
-				<br />
-				<span>{{message}}</span>
-				<span class="error">{{error}}</span>
-				<br />
-				<br />
-				<a href="#/tickets" ng-show="message"><span>Go to Ticket Overview</span></a>
-			</form>
+				<div ng-show="user.auth">
+					<a href="#/tickets" ng-show="message"><span>Go to Ticket Overview</span></a>
+					<br />
+					<br />
+					<button ng-click="user.auth=false;message=null;">Log out</button>
+				</div>
+			</div>
 		</script>
 		<script type="text/ng-template" id="/loginTest.html">
 			<div class="DIV_testView">
