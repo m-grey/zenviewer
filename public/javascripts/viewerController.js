@@ -7,7 +7,7 @@ function($stateProvider, $urlRouterProvider) {
 		$stateProvider
 			.state('overview', {
 				url: '/tickets',
-				templateUrl: '/overview.html',
+				templateUrl: '/tickets.html',
 				controller: 'ticketOverviewController'
 			}).state('ticket', {
 				url: '/tickets/:id',
@@ -21,13 +21,13 @@ function($stateProvider, $urlRouterProvider) {
 				url: '/loginTest',
 				templateUrl: '/loginTest.html',
 				controller: 'userAuthController'
-			}).state('overviewTest', {
+			}).state('ticketsTest', {
 				url: '/ticketsTest',
-				templateUrl: '/overviewTest.html',
+				templateUrl: '/ticketsTest.html',
 				controller: 'ticketOverviewController'
 			});
 	
-		$urlRouterProvider.otherwise('login');
+		$urlRouterProvider.otherwise('overviewTest');
 	}
 ]);
 
@@ -109,11 +109,11 @@ app.controller("ticketOverviewController",[
 					}
 				}).success(function(data, status, headers, config){
 					//tickets retreived, add them to tickets container
-					if(data.tickets !== undefined)
+					if(data.code === 0 && data.body.tickets !== undefined)
 					{
-						for(var i=0; i < data.tickets.length; i++)
+						for(var i=0; i < data.body.tickets.length; i++)
 						{
-							if(data.tickets[i].id !== ""){
+							if(data.body.tickets[i].id !== ""){
 								$scope.tickets.push(data.tickets[i]);
 							}
 						}

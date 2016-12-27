@@ -33,4 +33,7 @@
 #DIV_overview table tr:nth-child(even) {
   background-color: bisque; }
 
+.DIV_testView div {
+  margin-bottom: 25px; }
+
 /*# sourceMappingURL=viewerStyling.css.map */

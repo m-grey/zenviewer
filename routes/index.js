@@ -49,7 +49,10 @@ router.get("/tickets", function(req, res){
 					});
 				}
 				else
-					return res.status(200).json(bodyObj);
+					return res.status(200).json({
+						code:0,
+						body:bodyObj
+					});
 			}
 		});
 	}

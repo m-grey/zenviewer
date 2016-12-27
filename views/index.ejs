@@ -15,11 +15,11 @@
 			<h1>ZenViewer</h1>
 			<a href="#/login"><span>Login</span></a>
 			<a href="#/tickets"><span>Tickets</span></a>
-			<a href="#/testLogin"><span>Test Login</span></a>
-			<a href="#/testTickets"><span>Test Tickets</span></a>
+			<a href="#/loginTest"><span>Test Login</span></a>
+			<a href="#/ticketsTest"><span>Test Tickets</span></a>
 		</div>
 		<div ui-view></div>
-		<script type="text/ng-template" id="/overview.html">
+		<script type="text/ng-template" id="/tickets.html">
 			<div id="DIV_overview">
 				<div ng-hide="user.auth">
 					<h2>No active user</h2>
@@ -117,29 +117,48 @@
 			</form>
 		</script>
 		<script type="text/ng-template" id="/loginTest.html">
-			<p><strong>Output:</strong> {{message}}{{error}}</p>
-			<br />
-			<div>
-				<strong>Empty User Input</strong>
-				<button ng-click="test_EmptyUser()">Run</button>
+			<div class="DIV_testView">
+				<p><strong>Output:</strong> {{message}}{{error}}</p>
 				<br />
-				<span>Expected: Please supply a user login, password, and account name.</span>
-			</div>
-			<div>
-				<strong>Incorrect User Input</strong>
-				<button ng-click="test_IncorrectUser()">Run</button>
-				<br />
-				<span>Expected: Zendesk didn't authenticate your details, please input valid user details</span>
+				<div>
+					<strong>Empty User Input</strong>
+					<button ng-click="test_EmptyUser()">Run</button>
+					<br />
+					<span>Expected: Please supply a user login, password, and account name.</span>
+				</div>
+				<div>
+					<strong>Incorrect User Input</strong>
+					<button ng-click="test_IncorrectUser()">Run</button>
+					<br />
+					<span>Expected: Zendesk didn't authenticate your details, please input valid user details</span>
+				</div>
+				<div>
+					<strong>Correct User Input</strong>
+					<br />
+					<span>Expected: User is authentic, proceed to the ticket view</span>
+					<br />
+					<br />
+					<label>Username: </label><input type="text" ng-model="usernameInput" />
+					<br />
+					<label>Password: </label><input type="password" ng-model="passwordInput" />
+					<br />
+					<label>Account Name: </label><input type="text" ng-model="accountInput" />
+					<br />
+					<br />
+					<button ng-click="checkLogin()">Run</button>
+				</div>
 			</div>
 		</script>
-		<script type="text/ng-template" id="/overviewTest.html">
-			<p><strong>Output:</strong> {{message}}{{error}}</p>
-			<br />
-			<div>
-				<strong>Invalid User</strong>
-				<button ng-click="test_InvalidUser()">Run</button>
+		<script type="text/ng-template" id="/ticketsTest.html">
+			<div class="DIV_testView">
+				<p><strong>Output:</strong> {{message}}{{error}}</p>
 				<br />
-				<span>Expected: There is no active, authenticated user, please go back and login before proceeding.</span>
+				<div>
+					<strong>Invalid User Details</strong>
+					<button ng-click="test_InvalidUser()">Run</button>
+					<br />
+					<span>Expected: There is no active, authenticated user, please go back and login before proceeding.</span>
+				</div>
 			</div>
 		</script>
 	</body>
